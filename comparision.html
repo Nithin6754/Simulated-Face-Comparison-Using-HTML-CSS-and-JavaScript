@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Face Comparison (Simulated)</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f6fa;
+      padding: 40px;
+      text-align: center;
+    }
+
+    .container {
+      background: white;
+      max-width: 700px;
+      margin: auto;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      color: #2a7ae2;
+    }
+
+    .upload-section {
+      margin: 20px 0;
+    }
+
+    img {
+      max-height: 200px;
+      margin-top: 10px;
+      border: 1px solid #ccc;
+      padding: 5px;
+    }
+
+    .result {
+      margin-top: 30px;
+      font-size: 1.3em;
+      color: #2a7ae2;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Simulated Face Comparison</h1>
+  <p>Upload two images to simulate face recognition and comparison.</p>
+
+  <div class="upload-section">
+    <label><strong>Upload Known Face:</strong></label><br>
+    <input type="file" accept="image/*" onchange="handleUpload(event, 'known')" /><br>
+    <img id="known-preview" style="display:none" />
+  </div>
+
+  <div class="upload-section">
+    <label><strong>Upload Test Face:</strong></label><br>
+    <input type="file" accept="image/*" onchange="handleUpload(event, 'test')" /><br>
+    <img id="test-preview" style="display:none" />
+  </div>
+
+  <div class="result" id="result"></div>
+</div>
+
+<script>
+  let knownFileName = '';
+  let testFileName = '';
+
+  function handleUpload(event, type) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    const imgId = type === 'known' ? 'known-preview' : 'test-preview';
+
+    reader.onload = function (e) {
+      const img = document.getElementById(imgId);
+      img.src = e.target.result;
+      img.style.display = 'block';
+    };
+
+    reader.readAsDataURL(file);
+
+    // Store filename for comparison
+    if (type === 'known') {
+      knownFileName = file.name.toLowerCase();
+    } else {
+      testFileName = file.name.toLowerCase();
+    }
+
+    // Compare when both uploaded
+    if (knownFileName && testFileName) {
+      simulateFaceMatch(knownFileName, testFileName);
+    }
+  }
+
+  function simulateFaceMatch(known, test) {
+    const resultBox = document.getElementById("result");
+    
+    // Simple simulation: if filenames share a name substring
+    const knownBase = known.split('.')[0];
+    const testBase = test.split('.')[0];
+
+    if (knownBase && testBase && testBase.includes(knownBase)) {
+      resultBox.innerHTML = `✅ Match Found: Both images are likely the same person.`;
+    } else {
+      resultBox.innerHTML = `❌ No Match: The images appear to be different.`;
+    }
+  }
+</script>
+
+</body>
+</html>
